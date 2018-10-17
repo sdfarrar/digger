@@ -7,9 +7,12 @@ namespace UnityStandardAssets._2D
     [RequireComponent(typeof (PlatformerCharacter2D))]
     public class Platformer2DUserControl : MonoBehaviour
     {
+        public float RunSpeed = 40f;
+
         private PlatformerCharacter2D m_Character;
         private bool m_Jump;
         private bool m_Shoot;
+        private float m_HorizontalMove;
 
 
         private void Awake()
@@ -28,6 +31,7 @@ namespace UnityStandardAssets._2D
             if(!m_Shoot){
                 m_Shoot = CrossPlatformInputManager.GetButtonDown("Fire1");
             }
+            m_HorizontalMove = CrossPlatformInputManager.GetAxis("Horizontal") * RunSpeed;
         }
 
 
@@ -35,9 +39,8 @@ namespace UnityStandardAssets._2D
         {
             // Read the inputs.
             bool crouch = Input.GetKey(KeyCode.LeftControl);
-            float h = CrossPlatformInputManager.GetAxis("Horizontal");
             // Pass all parameters to the character control script.
-            m_Character.Move(h, crouch, m_Jump);
+            m_Character.Move(m_HorizontalMove * Time.fixedDeltaTime, crouch, m_Jump);
             m_Character.Shoot(m_Shoot);
             m_Jump = false;
             m_Shoot = false;

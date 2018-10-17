@@ -8,6 +8,7 @@ namespace UnityStandardAssets._2D
         [SerializeField] private float m_MaxSpeed = 10f;                    // The fastest the player can travel in the x axis.
         [SerializeField] private float m_JumpForce = 400f;                  // Amount of force added when the player jumps.
         [Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;  // Amount of maxSpeed applied to crouching movement. 1 = 100%
+        [Range(0, 0.3f)] [SerializeField] private float m_MovementSmoothing = 0.05f;
         [SerializeField] private bool m_AirControl = false;                 // Whether or not a player can steer while jumping;
         [SerializeField] private LayerMask m_WhatIsGround;                  // A mask determining what is ground to the character
 
@@ -19,6 +20,8 @@ namespace UnityStandardAssets._2D
         public Animator Anim;            // Reference to the player's animator component.
         public Rigidbody2D Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
+
+        private Vector2 velocity = Vector3.zero;
 
         private void Awake()
         {
@@ -73,8 +76,10 @@ namespace UnityStandardAssets._2D
                 // The Speed animator parameter is set to the absolute value of the horizontal input.
                 Anim.SetFloat("Speed", Mathf.Abs(move));
 
+                Vector2 targetVelocity = new Vector2(move * 10f, Rigidbody2D.velocity.y);
                 // Move the character
-                Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed, Rigidbody2D.velocity.y);
+                //Rigidbody2D.velocity = new Vector2(move*m_MaxSpeed, Rigidbody2D.velocity.y);
+                Rigidbody2D.velocity = Vector2.SmoothDamp(Rigidbody2D.velocity, targetVelocity, ref velocity, m_MovementSmoothing);
 
                 // If the input is moving the player right and the player is facing left...
                 if (move > 0 && !m_FacingRight)
