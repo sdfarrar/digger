@@ -99,6 +99,9 @@ namespace UnityStandardAssets._2D
             }
         }
 
+        public void Shoot(bool shoot){
+            Anim.SetBool("Shoot", shoot);
+        }
 
         private void Flip()
         {
